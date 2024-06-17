@@ -5,26 +5,6 @@
 class Board
 {
 private:
-    std::array<std::array<char, 3>, 3> board_data{{{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}}};
-
-    std::string gen_separator_row()
-    {
-        std::string row;
-        for (int i = 0; i < 5; i++)
-        {
-            if (i % 2)
-            {
-
-                row.push_back(197);
-            }
-            else
-            {
-                row.push_back(196);
-            }
-        }
-        row.push_back('\n');
-        return row;
-    }
     char check_win_row(int row_number)
     {
 
@@ -83,31 +63,9 @@ private:
     }
 
 public:
+    std::array<std::array<char, 3>, 3> board_data{{{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}}};
     Board(std::array<std::array<char, 3>, 3> preset_board) : board_data(preset_board) {}
     Board() = default;
-
-    std::string gen_board()
-    {
-        std::string board;
-        for (int board_row = 0; board_row < 3; board_row++)
-        {
-            for (int board_column = 0; board_column < 3; board_column++)
-            {
-                char char_to_draw = this->board_data[board_row][board_column];
-                board.push_back(char_to_draw);
-                if (board_column < 2)
-                {
-                    board.push_back(179);
-                }
-            }
-            board.push_back('\n');
-            if (board_row < 2)
-            {
-                board += this->gen_separator_row();
-            }
-        }
-        return board;
-    }
 
     /*
     @param
