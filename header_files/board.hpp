@@ -1,6 +1,5 @@
 #include <array>
 #include <string>
-#include <iostream>
 
 class Board
 {
@@ -40,7 +39,7 @@ private:
     char chek_win_cross_1()
     {
         int cell_0_0 = this->board_data[0][0];
-        for (int i = 1; i < std::min(this->board_data.size(), this->board_data[0].size()); i++)
+        for (int i = 1; i < 3; i++)
         {
             if (board_data[i][i] != cell_0_0)
             {
@@ -52,7 +51,7 @@ private:
     char chek_win_cross_2()
     {
         int cell_0_last = this->board_data[0].back();
-        for (int i = 1; i < std::min(this->board_data.size(), this->board_data[0].size()); i++)
+        for (int i = 1; i < 3; i++)
         {
             if (board_data[i][board_data.size() - 1 - i] != cell_0_last)
             {
@@ -101,7 +100,7 @@ public:
     char check_win()
     {
         // checking for row win
-        for (int row = 0; row < this->board_data.size(); row++)
+        for (int row = 0; row < 3; row++)
         {
             char winning_char = check_win_row(row);
             if (winning_char != ' ')
@@ -110,7 +109,7 @@ public:
             }
         }
         // checking for column win
-        for (int column = 0; column < this->board_data[0].size(); column++)
+        for (int column = 0; column < 3; column++)
         {
             char winning_char = check_win_column(column);
             if (winning_char != ' ')
@@ -127,5 +126,19 @@ public:
         }
 
         return chek_win_cross_2();
+    }
+    bool end_of_space()
+    {
+        for (int row = 0; row < 3; row++)
+        {
+            for (int column = 0; column < 3; column++)
+            {
+                if (this->board_data[row][column] == ' ')
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 };
