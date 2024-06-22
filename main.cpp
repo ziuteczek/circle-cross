@@ -8,7 +8,7 @@ int main()
 {
     bool current_player = false;
     Board board;
-    Chose pick(board.board_data);
+    Chose pick(&board.board_data,&current_player);
     char winner;
     do
     {
@@ -16,12 +16,13 @@ int main()
         picked_cell = pick.pick_cell();
 
         board.player_move(current_player, picked_cell[0], picked_cell[1]);
-        pick.update_board_data(board.board_data);
 
         current_player = !current_player;
 
         winner = board.check_win();
     } while (winner == ' ' && !board.end_of_space());
+
+    pick.end_game();
 
     system("cls");
 
@@ -33,5 +34,6 @@ int main()
     {
         std::cout << winner << " has won" << std::endl;
     }
+    system("pause");
     return 0;
 }

@@ -15,13 +15,16 @@
 class Chose
 {
 private:
-    std::array<std::array<char, 3>, 3> board_data;
+    std::array<std::array<char, 3>, 3> *board_data;
 
     // std::array<int, 2> blink_pos{{0, 0}};
     std::atomic_int blink_row = 0;
     std::atomic_int blink_column = 0;
 
+    std::unique_ptr<std::thread> blinking_thread_ptr;
+
     bool do_blink = true;
+    bool *current_player;
 
     std::atomic_bool stop_blink = false;
 
@@ -46,7 +49,7 @@ private:
     std::string gen_board(bool blinked = false)
     {
         std::string board;
-        std::array<std::array<char, 3>, 3> board_data = this->board_data;
+        std::array<std::array<char, 3>, 3> board_data = *this->board_data;
         if (blinked)
         {
             board_data[blink_row][blink_column] = 177;
@@ -75,6 +78,7 @@ private:
         while (!stop_blink)
         {
             system("cls");
+            std::cout << "Place " << (*current_player ? 'x' : 'o') << std::endl;
             std::cout << gen_board(do_blink) << std::endl;
             do_blink = !do_blink;
             Sleep(750);
@@ -94,7 +98,7 @@ private:
     }
     bool is_cell_empty()
     {
-        return this->board_data[blink_row][blink_column] == ' ';
+        return (*this->board_data)[blink_row][blink_column] == ' ';
     }
     void move_blink(char key_pressed)
     {
@@ -122,10 +126,9 @@ private:
     }
 
 public:
-    Chose(std::array<std::array<char, 3>, 3> board_input) : board_data(board_input)
+    Chose(std::array<std::array<char, 3>, 3> *board_input, bool *current_player) : board_data(board_input), current_player(current_player)
     {
-        std::thread blink_thread(&frame, this);
-        blink_thread.detach();
+        blinking_thread_ptr = std::unique_ptr<std::thread>(new std::thread(&frame, this));
     }
     std::array<int, 2> pick_cell()
     {
@@ -137,12 +140,9 @@ public:
         } while (!(key_pressed == KEY_ENTER && is_cell_empty()));
         return std::array<int, 2>{{blink_row, blink_column}};
     }
-    void stop_blinking()
+    void end_game()
     {
         this->stop_blink = true;
-    }
-    void update_board_data(std::array<std::array<char, 3>, 3> board)
-    {
-        this->board_data = board;
+        (*blinking_thread_ptr).join();
     }
 };
